@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multi-View Proof of Concept Tool (Randomized)</title>
+    <style>
+        :root {
+            --bg-color: #1a1a1a;
+            --panel-bg: #2d2d2d;
+            --text-color: #e0e0e0;
+            --accent: #007bff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .controls {
+            background-color: var(--panel-bg);
+            padding: 15px;
+            border-radius: 8px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+            flex-wrap: wrap;
+        }
+
+        input[type="text"], input[type="number"] {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #555;
+            background: #444;
+            color: white;
+            font-size: 14px;
+        }
+
+        input[type="text"] { flex-grow: 1; }
+        
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+
+        .btn-start { background-color: #28a745; color: white; }
+        .btn-start:hover { background-color: #218838; }
+        
+        .btn-stop { background-color: #dc3545; color: white; }
+        .btn-stop:hover { background-color: #c82333; }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 10px;
+            flex-grow: 1;
+            overflow-y: auto;
+            border: 1px solid #444;
+            padding: 10px;
+            border-radius: 8px;
+        }
+
+        .browser-frame {
+            background: white;
+            border: 2px solid #555;
+            height: 250px;
+            position: relative;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .frame-header {
+            background: #ddd;
+            color: #333;
+            padding: 2px 5px;
+            font-size: 10px;
+            text-align: center;
+            border-bottom: 1px solid #999;
+        }
+
+        iframe {
+            width: 100%;
+            height: calc(100% - 15px);
+            border: none;
+        }
+
+        .status-bar {
+            margin-top: 10px;
+            font-size: 0.9em;
+            color: #aaa;
+        }
+    </style>
+</head>
+<body>
+
+    <h2 style="margin-top: 0;">Multi-View Proof of Concept Tool (Randomized)</h2>
+
+    <div class="controls">
+        <label>URL:</label>
+        <input type="text" id="targetUrl" placeholder="https://example.com (iframe allowed)" value="">
+        
+        <label>Tabs:</label>
+        <input type="number" id="tabCount" value="10" min="1" max="30" style="width: 60px;">
+
+        <label>Min Refresh (sec):</label>
+        <input type="number" id="minRefresh" value="30" min="10" style="width: 60px;">
+        
+        <label>Max Refresh (sec):</label>
+        <input type="number" id="maxRefresh" value="60" min="10" style="width: 60px;">
+
+        <button class="btn-start" onclick="startSimulation()">Start Simulation</button>
+        <button class="btn-stop" onclick="stopSimulation()">Stop / Clear</button>
+    </div>
+
+    <div class="status-bar" id="status">Status: Ready to start.</div>
+
+    <div class="grid-container" id="viewGrid">
+        </div>
+
+    <script>
+        let refreshIntervals = [];
+
+        function getRandomInterval(min, max) {
+            // Returns a random value in milliseconds between min and max
+            return Math.floor(Math.random() * (max - min + 1) + min) * 1000;
+        }
+
+        function startSimulation() {
+            stopSimulation();
+
+            const url = document.getElementById('targetUrl').value;
+            const count = parseInt(document.getElementById('tabCount').value);
+            const minTime = parseInt(document.getElementById('minRefresh').value);
+            const maxTime = parseInt(document.getElementById('maxRefresh').value);
+            const grid = document.getElementById('viewGrid');
+            const status = document.getElementById('status');
+
+            if (!url) { alert("Please enter a valid URL."); return; }
+            if (minTime >= maxTime) { alert("Min Refresh must be less than Max Refresh."); return; }
+            if (count > 30) { alert("Warning: Max 30 tabs recommended to prevent crashing."); }
+
+            status.innerText = `Status: Running ${count} views (Refresh: ${minTime}-${maxTime}s)...`;
+
+            for (let i = 0; i < count; i++) {
+                createFrame(i + 1, url, grid, minTime, maxTime);
+            }
+        }
+
+        function createFrame(index, url, container, minTime, maxTime) {
+            const randomRefreshTime = getRandomInterval(minTime, maxTime);
+            
+            const wrapper = document.createElement('div');
+            wrapper.className = 'browser-frame';
+
+            const header = document.createElement('header');
+            header.className = 'frame-header';
+            header.innerText = `View #${index} | Reload: ${(randomRefreshTime/1000).toFixed(1)}s`;
+
+            const iframe = document.createElement('iframe');
+            
+            // Adding a random timestamp parameter to bypass browser caching
+            iframe.src = url + "?t=" + new Date().getTime() + "&view=" + index; 
+            
+            wrapper.appendChild(header);
+            wrapper.appendChild(iframe);
+            container.appendChild(wrapper);
+
+            // Auto Refresh Logic with Random Time
+            const interval = setInterval(() => {
+                // Update the URL with a new random timestamp and reload
+                iframe.src = url + "?t=" + new Date().getTime() + "&view=" + index;
+                
+                // Update header text to show next reload time (for visual proof)
+                const nextRandomTime = getRandomInterval(minTime, maxTime);
+                header.innerText = `View #${index} | Reload: ${(nextRandomTime/1000).toFixed(1)}s`;
+                
+                // Since setInterval repeats based on the *first* time given,
+                // we update the header to show the natural time variance.
+                
+            }, randomRefreshTime);
+
+            refreshIntervals.push(interval);
+        }
+
+        function stopSimulation() {
+            const grid = document.getElementById('viewGrid');
+            grid.innerHTML = '';
+            
+            refreshIntervals.forEach(interval => clearInterval(interval));
+            refreshIntervals = [];
+            
+            document.getElementById('status').innerText = "Status: Stopped.";
+        }
+    </script>
+</body>
+</html>
