@@ -152,7 +152,7 @@
 
             if (!url) { alert("Please enter a valid URL."); return; }
             if (minTime >= maxTime) { alert("Min Refresh must be less than Max Refresh."); return; }
-            if (count > 30) { alert("Warning: Max 30 tabs recommended to prevent crashing."); }
+            if (count > 100) { alert("Warning: Max 30 tabs recommended to prevent crashing."); }
 
             status.innerText = `Status: Running ${count} views (Refresh: ${minTime}-${maxTime}s)...`;
 
