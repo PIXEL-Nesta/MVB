@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Watch multiple YouTube videos synchronized instantly in a single, responsive grid. Play, pause, and seek all videos simultaneously for perfect comparison and group viewing.">
+  <meta name="keywords" content="viewsync clone, sync multiple youtube videos, watch multiple videos simultaneously, synchronized video player, multi view video player, multiple video sync, youtube video sync tool, sync videos, watch videos together, multi streamer view, multi-view streaming, compare videos side by side, side-by-side video sync, video comparison tool, multi-window player, group watch videos, youtube sync tool, video party sync, multi stream viewer, parallel video playback, live stream sync, group viewing experience, video synchronization online, responsive video grid, sync playback, frame by frame comparison, sync video timeline, watch party tool, video playlist sync, multi-platform video sync, real-time video sync, video sync utility, browser video sync, view sync alternative, same time video player, 2 video sync, 4 video sync, 6 video sync, 10 video sync, 30 video grid, custom video grid, video synchronization website, multi angle video viewer, sync youtube clips, video time sync, exact sync video, dual video player, triple video viewer, quad video player, video review tool, compare live streams, synchronized streaming, free video sync tool, best multi video viewer, online video syncer, multi-channel view, concurrent video playback, seamless video sync, synchronized group video, video sync for events, training video sync, video analysis tool, multi-feed viewer, synchronized learning, simultaneous play, multi screen youtube, video time shift, video offset sync, video delay sync, compare gameplay videos, compare sports videos, synchronized music videos, video study tool, youtube iframe sync, iframe player api sync, video grid view, custom multi viewer, online video wall, responsive video sync, quick video sync, easy video comparison, stream sync app, multi player video, watch videos in sync, browser sync player, video layout organizer, all-in-one video viewer, video playback control, advanced video sync, side by side streaming, multi-stream layout, video grid layout, video player clone, customizable video player, multi media player, dynamic video player, video url sync">
+  <title>Free Multi-View Browser for Youtube Videos</title>
+    
+   <style>
+    /*
+    =================================================
+    बेसिक और ग्लोबल स्टाइल्स
+    =================================================
+    */
+    body {
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        background-color: #121212; /* डार्क बैकग्राउंड */
+        color: #e0e0e0;
+        margin: 0;
+        padding: 0;
+    }
+
+    h1 {
+        text-align: center;
+        color: #00e0ff; /* नियॉन ब्लू/सियान */
+        padding: 20px 0;
+        margin-bottom: 20px;
+        text-shadow: 0 0 8px rgba(0, 224, 255, 0.5); /* नियॉन इफ़ेक्ट */
+    }
+
+    /*
+    =================================================
+    इनपुट और कंट्रोल स्टाइल्स
+    =================================================
+    */
+    .input-area, .controls {
+        text-align: center;
+        margin: 0 auto 25px;
+        padding: 15px;
+        background-color: #1e1e1e; /* थोड़ा हल्का डार्क */
+        border-radius: 12px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+        max-width: 90%;
+        transition: box-shadow 0.3s ease;
+    }
+    
+    .input-area:hover, .controls:hover {
+        box-shadow: 0 6px 20px rgba(0, 224, 255, 0.1); /* हॉवर पर हल्का नियॉन ग्लो */
+    }
+
+    .input-area input[type="text"] {
+        padding: 12px;
+        width: 60%;
+        max-width: 450px;
+        border: 2px solid #333;
+        border-radius: 8px;
+        font-size: 16px;
+        background-color: #2a2a2a;
+        color: white;
+        margin-right: 15px;
+        transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    /* इनपुट फ़ोकस इफ़ेक्ट */
+    .input-area input[type="text"]:focus {
+        outline: none;
+        border-color: #00e0ff; /* फ़ोकस पर नियॉन बॉर्डर */
+        box-shadow: 0 0 5px rgba(0, 224, 255, 0.7);
+    }
+
+    /*
+    =================================================
+    बटन स्टाइल्स और हॉवर एनिमेशन
+    =================================================
+    */
+    .input-area button, .controls button {
+        padding: 12px 25px;
+        font-weight: bold;
+        font-size: 16px;
+        cursor: pointer;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        margin: 5px;
+        transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+    }
+
+    /* वीडियो जोड़ें बटन */
+    .input-area button {
+        background-color: #4CAF50; /* हरा */
+    }
+    .input-area button:hover {
+        background-color: #43a047;
+        transform: translateY(-2px); /* हल्का ऊपर उठना */
+        box-shadow: 0 4px 10px rgba(76, 175, 80, 0.4);
+    }
+
+    /* कंट्रोल बटन (Play/Pause/Jump) */
+    .controls button {
+        background-color: #00bcd4; /* सियान */
+    }
+    .controls button:hover {
+        background-color: #0097a7;
+        transform: scale(1.03); /* हल्का बड़ा होना */
+    }
+
+    /* Remove All बटन के लिए विशेष स्टाइल */
+    #removeAllBtn {
+        background-color: #f44336 !important; /* लाल */
+    }
+    #removeAllBtn:hover {
+        background-color: #d32f2f !important;
+        transform: rotate(2deg); /* हल्का घूमना */
+    }
+
+    /*
+    =================================================
+    ग्रिड और वीडियो कंटेनर स्टाइल्स
+    =================================================
+    */
+    .video-grid {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 25px;
+        padding: 20px;
+    }
+
+    .video-container {
+        width: calc(33.333% - 25px); /* तीन वीडियो एक लाइन में दिखाने के लिए */
+        min-width: 300px;
+        max-width: 450px;
+        aspect-ratio: 16 / 9;
+        background-color: #000;
+        border: 4px solid #333;
+        border-radius: 8px;
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.5);
+        overflow: hidden;
+        /* वीडियो जोड़ने/हटाने के लिए स्मूथ एनिमेशन */
+        transition: transform 0.4s ease, border-color 0.4s ease;
+    }
+
+    /* हॉवर इफ़ेक्ट (थोड़ा बड़ा होता है) */
+    .video-container:hover {
+        transform: scale(1.02);
+        border-color: #00e0ff; /* हॉवर पर नियॉन बॉर्डर */
+        box-shadow: 0 8px 20px rgba(0, 224, 255, 0.3);
+    }
+    
+    /* Iframe */
+    .video-container iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /*
+    =================================================
+    रेस्पॉन्सिवनेस (छोटे स्क्रीन के लिए)
+    =================================================
+    */
+    @media (max-width: 900px) {
+        .video-container {
+            width: calc(50% - 20px); /* 900px से कम पर दो वीडियो एक लाइन में */
+        }
+        .input-area input[type="text"] {
+            width: 90%;
+            margin-bottom: 10px;
+        }
+        .input-area button {
+            width: 90%;
+        }
+    }
+
+    @media (max-width: 600px) {
+        .video-container {
+            width: 100%; /* 600px से कम पर एक वीडियो एक लाइन में */
+            min-width: auto;
+        }
+        h1 {
+            font-size: 24px;
+        }
+        .controls button {
+            font-size: 14px;
+            padding: 10px 15px;
+        }
+    }
+</style>
+</head>
+<body>
+
+    <h1>Free Multi-View Browser for Youtube Videos</h1>
+    
+    <div class="input-area">
+        <input type="text" id="videoUrlInput" placeholder="YouTube URL या ID यहाँ पेस्ट करें...">
+        <button onclick="addVideo()">वीडियो जोड़ें</button>
+    </div>
+
+    <div class="controls">
+        <button id="syncPlayBtn">▶️ All Play</button>
+        <button id="syncPauseBtn">⏸️ All Pause</button>
+        <button id="syncJumpBtn">🔄 Jump to Start</button>
+        <button id="removeAllBtn" style="background-color: #f44336;">❌ Remove All</button>
+    </div>
+
+    <div class="video-grid" id="videoGrid">
+        </div>
+
+    <script>
+        // 1. YouTube API को लोड करने के लिए एक प्लेसहोल्डर array और flag
+        let players = [];
+        let playerCounter = 0;
+        const videoGrid = document.getElementById('videoGrid');
+
+        // 2. YouTube Iframe API स्क्रिप्ट को asynchronously लोड करें
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        // 3. API लोड होने पर YouTube इस फ़ंक्शन को कॉल करेगा (ज़रूरी)
+        function onYouTubeIframeAPIReady() {
+            console.log("YouTube API Ready.");
+            // API तैयार होने पर यदि कोई वीडियो जोड़ना हो तो यहाँ लॉजिक डाल सकते हैं।
+        }
+
+        // ===================================
+        // NEW FUNCTION: URL से ID निकालना
+        // ===================================
+        function extractVideoId(url) {
+            // RegEx for standard and shortened YouTube URLs
+            const regex = /(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([\w-]{11})/;
+            const match = url.match(regex);
+            
+            if (match && match[1]) {
+                return match[1];
+            }
+            // If it looks like a clean 11-char ID, return it as is
+            if (url.length === 11 && /[\w-]{11}/.test(url)) {
+                 return url;
+            }
+            return null;
+        }
+
+        // ===================================
+        // NEW FUNCTION: वीडियो जोड़ने का लॉजिक
+        // ===================================
+        function addVideo() {
+            const inputElement = document.getElementById('videoUrlInput');
+            const url = inputElement.value.trim();
+            inputElement.value = ''; // इनपुट फील्ड खाली करें
+
+            const videoId = extractVideoId(url);
+
+            if (!videoId) {
+                alert('कृपया एक मान्य YouTube URL या वीडियो ID दर्ज करें।');
+                return;
+            }
+
+            // 1. नया HTML कंटेनर बनाएं
+            playerCounter++;
+            const containerId = `player${playerCounter}`;
+            
+            const newContainer = document.createElement('div');
+            newContainer.className = 'video-container';
+            newContainer.id = containerId;
+            videoGrid.appendChild(newContainer);
+
+            // 2. YouTube प्लेयर बनाएं
+            createPlayer(containerId, videoId);
+        }
+
+        // 4. प्लेयर बनाने का फ़ंक्शन
+        function createPlayer(containerId, videoId) {
+            const player = new YT.Player(containerId, {
+                height: '100%',
+                width: '100%',
+                videoId: videoId,
+                playerVars: {
+                    'playsinline': 1,
+                    'controls': 1,
+                    'autoplay': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+            players.push(player);
+            // पहले प्लेयर को छोड़कर बाकी सब म्यूट कर दें
+            if (players.length > 1) {
+                player.setVolume(0); 
+            }
+            console.log(`Player ${videoId} added. Total players: ${players.length}`);
+        }
+
+        // 5. जब प्लेयर लोड हो जाए
+        function onPlayerReady(event) {
+            // सुनिश्चित करें कि मास्टर प्लेयर का वॉल्यूम 100% हो (यदि पहला है)
+            if (players.length === 1) {
+                event.target.setVolume(100);
+            }
+        }
+
+        // 6. सिंक्रनाइज़ेशन लॉजिक (केवल मास्टर प्लेयर [पहला प्लेयर] से कंट्रोल करें)
+        function onPlayerStateChange(event) {
+            // केवल पहला प्लेयर (players[0]) ही मास्टर है
+            if (event.target !== players[0]) {
+                return;
+            }
+
+            const state = event.data;
+            const masterTime = players[0].getCurrentTime();
+            
+            // यदि मास्टर वीडियो PLAY होता है
+            if (state === YT.PlayerState.PLAYING) {
+                players.forEach((player, index) => {
+                    if (index > 0) { // बाकि स्लेव प्लेयर्स को सिंक्रनाइज़ करें
+                        player.seekTo(masterTime, true);
+                        player.playVideo();
+                    }
+                });
+            } 
+            // यदि मास्टर वीडियो PAUSE होता है
+            else if (state === YT.PlayerState.PAUSED) {
+                players.forEach((player, index) => {
+                    if (index > 0) {
+                        player.pauseVideo();
+                    }
+                });
+            }
+            // यदि कोई वीडियो खत्म हो जाता है
+            else if (state === YT.PlayerState.ENDED) {
+                players.forEach(player => {
+                    player.stopVideo();
+                });
+            }
+        }
+        
+        // 7. बटन हैंडलर
+        document.getElementById('syncPlayBtn').addEventListener('click', () => {
+            if (players.length > 0) {
+                const masterTime = players[0].getCurrentTime();
+                players.forEach(player => {
+                    player.seekTo(masterTime, true);
+                    player.playVideo();
+                });
+            }
+        });
+
+        document.getElementById('syncPauseBtn').addEventListener('click', () => {
+             players.forEach(player => player.pauseVideo());
+        });
+
+        document.getElementById('syncJumpBtn').addEventListener('click', () => {
+            players.forEach(player => player.seekTo(0, true));
+            players.forEach(player => player.pauseVideo()); // जम्प के बाद पॉज़ कर दें
+        });
+        
+        document.getElementById('removeAllBtn').addEventListener('click', () => {
+            if (confirm("क्या आप सभी वीडियो हटाना चाहते हैं?")) {
+                players = []; // Array खाली करें
+                playerCounter = 0;
+                videoGrid.innerHTML = ''; // HTML ग्रिड को खाली करें
+            }
+        });
+
+        // Enter key दबाने पर वीडियो जोड़ने के लिए
+        document.getElementById('videoUrlInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                addVideo();
+            }
+        });
+
+    </script>
+
+</body>
+</html>
